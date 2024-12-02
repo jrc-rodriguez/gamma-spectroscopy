@@ -539,3 +539,17 @@ def callback_factory(event):
         """Signal that data is ready when called by PicoSDK."""
         event.set()
     return data_is_ready_callback
+
+# def trigger_A_and_B():
+
+#     pulseheights = []
+#     coincedences = []
+#     if A is triggered:
+#         look in time window in B
+#         if B is triggered by same pulsheight:
+#             coincidence = True
+#             pulseheights.append(pulseheight)
+#             coincedences.append(?)
+    
+#     plt.hist(pulseheights, coincidences)
+
