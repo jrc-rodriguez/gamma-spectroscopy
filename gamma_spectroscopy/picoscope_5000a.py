@@ -578,4 +578,3 @@ def callback_factory(event):
 #     if is
     
 #     plt.hist(pulseheights, coincidences)
-
