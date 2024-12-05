@@ -288,6 +288,12 @@ class UserInterface(QtWidgets.QMainWindow):
             self.scope.stop()
 
     @QtCore.pyqtSlot(int)
+    def set_upper_trigger_state_2(self, state):
+        if not self._trigger_channel == 'A AND B':
+            self._is_upper_threshold_enabled = state
+            self.scope.stop()
+
+    @QtCore.pyqtSlot(int)
     def set_polarity(self, idx):
         self._pulse_polarity = self.POLARITY[idx]
         self._polarity_sign = self.POLARITY_SIGN[idx]
@@ -319,6 +325,13 @@ class UserInterface(QtWidgets.QMainWindow):
         if self.trigger_channel_box.currentText() == 'A OR B':
             self._trigger_channel = 'A OR B'
             self.scope.set_trigger_A_OR_B(self._polarity_sign * self._threshold,
+                                          edge,
+                                          is_enabled=self._is_trigger_enabled)
+            self._upper_trigger_state = False
+            self.upper_trigger_box.setCheckable(False)
+        if self.trigger_channel_box.currentText() == 'A AND B':
+            self._trigger_channel = 'A AND B'
+            self.scope.set_trigger_A_AND_B(self._polarity_sign * self._threshold,
                                           edge,
                                           is_enabled=self._is_trigger_enabled)
             self._upper_trigger_state = False

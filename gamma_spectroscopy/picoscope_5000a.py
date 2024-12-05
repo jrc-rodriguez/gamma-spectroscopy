@@ -475,6 +475,31 @@ class PicoScope5000A:
             assert_pico_ok(ps.ps5000aSetTriggerChannelConditionsV2(self._handle,
                                         ctypes.byref(trigConditionA), 0, clear))
 
+    def set_trigger_A_and_B(self, threshold=0., direction='RISING',
+                            is_enabled=True):
+
+        channelA = ps.PS5000A_CHANNEL["PS5000A_CHANNEL_A"]
+        channelB = ps.PS5000A_CHANNEL["PS5000A_CHANNEL_B"]
+        dir      = _get_trigger_direction_from_name(direction)
+        mode     = ps.PS5000A_THRESHOLD_MODE["PS5000A_LEVEL"]
+
+        Direction2       = ps.PS5000A_DIRECTION*2 # see ctypes docs
+        trigDirectionAB  = Direction2(ps.PS5000A_DIRECTION(channelA, dir, mode),
+                                        ps.PS5000A_DIRECTION(channelB, dir, mode))
+
+        thresholdA = self._rescale_V_to_adc('A', threshold)
+        thresholdB = self._rescale_V_to_adc('B', threshold)
+        Property2  = ps.PS5000A_TRIGGER_CHANNEL_PROPERTIES_V2*2
+        trigPropertiesAB = \
+        Property2(ps.PS5000A_TRIGGER_CHANNEL_PROPERTIES_V2(thresholdA,
+                                                                0, 0, 0, channelA),
+                ps.PS5000A_TRIGGER_CHANNEL_PROPERTIES_V2(thresholdB,
+                                                                0, 0, 0, channelB))
+
+        state_true      = ps.PS5000A_TRIGGER_STATE["PS5000A_CONDITION_TRUE"]
+        trigConditionA  = ps.PS5000A_CONDITION(channelA, state_true)
+        trigConditionB  = ps.PS5000A_CONDITION(channelB, state_true)
+
 
     def _get_enabled_channels(self):
         """Return list of enabled channels."""
@@ -540,16 +565,17 @@ def callback_factory(event):
         event.set()
     return data_is_ready_callback
 
-# def trigger_A_and_B():
-
 #     pulseheights = []
 #     coincedences = []
+
 #     if A is triggered:
-#         look in time window in B
+#         look within time window in B
 #         if B is triggered by same pulsheight:
 #             coincidence = True
 #             pulseheights.append(pulseheight)
 #             coincedences.append(?)
+                                
+#     if is
     
 #     plt.hist(pulseheights, coincidences)
 
