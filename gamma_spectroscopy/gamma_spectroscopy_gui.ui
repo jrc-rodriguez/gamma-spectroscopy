@@ -368,6 +368,11 @@
             <string>A OR B</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>A AND B</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item row="7" column="0">
