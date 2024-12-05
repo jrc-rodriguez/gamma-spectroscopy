@@ -336,7 +336,7 @@ class UserInterface(QtWidgets.QMainWindow):
                                           is_enabled=self._is_trigger_enabled)
             self._upper_trigger_state = False
             self.upper_trigger_box.setCheckable(False)
-        else:
+        if self.trigger_channel_box.currentText() != 'A OR B' and self.trigger_channel_box.currentText() != 'A AND B':
             # get last letter of trigger channel box ('Channel A' -> 'A')
             channel = self.trigger_channel_box.currentText()[-1]
             self._trigger_channel = channel
