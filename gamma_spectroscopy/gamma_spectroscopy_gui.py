@@ -492,6 +492,8 @@ class UserInterface(QtWidgets.QMainWindow):
         times = np.array(times)
         baselines = np.array(baselines)
         pulseheights = np.array(pulseheights)
+        self.baselines = np.array(baselines)
+        self.pulseheights = np.array(pulseheights)
 
         if self._write_output and not self._output_file.closed:
             writer = csv.writer(self._output_file)
@@ -536,11 +538,16 @@ class UserInterface(QtWidgets.QMainWindow):
         self.event_plot.clear()
         if self.ch_A_enabled_box.isChecked():
             self.event_plot.plot(x * 1e6, A, **self._plot_options["A"])
+
         if self.ch_B_enabled_box.isChecked():
             self.event_plot.plot(x * 1e6, B, **self._plot_options["B"])
 
         if self._show_guides:
             self.draw_event_plot_guides(x, baselines, pulseheights)
+
+        self.x_times = x * 1e6
+        self.A = A
+        self.B = B
 
     def draw_event_plot_guides(self, x, baselines, pulseheights):
         phA, phB = pulseheights
@@ -685,19 +692,17 @@ class UserInterface(QtWidgets.QMainWindow):
         """Dialog for exporting a data file."""
 
         file_path, _ = QtWidgets.QFileDialog.getSaveFileName(
-            self, caption="Save spectrum", directory="spectrum.csv"
+            self, caption="Save events", directory="events.csv"
         )
+
         if not file_path:
             # Cancel was pressed, no file was selected
             return
 
-        x, _, channel_counts = self.make_spectrum()
-        channel_counts = [u if u is not None else [0] * len(x) for u in channel_counts]
-
         with open(file_path, "w", newline="") as f:
             writer = csv.writer(f)
-            writer.writerow(("times (μs)", "Signals (V)"))
-            for row in zip(x, *channel_counts):
+            writer.writerow(("times (us)", "Signal A (V)", "Signal B (V)"))
+            for row in zip(self.x_times, self.A, self.B):
                 writer.writerow(row)
 
     def write_output_dialog(self):
